@@ -1,0 +1,51 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = i+1; j < nums.size(); j++) {
+                if (nums[i] + nums[j] == target) {
+                    return { i,j };         //返回vector容器实例
+                }
+            }
+        }
+        return {};             //返回空容器
+    }
+};
+
+static void GetArray(vector<int>& nums) {
+    cout << "please input array:" << endl;
+    int num;
+    while(cin>>num) {
+        nums.push_back(num);              //动态数组末尾扩容
+        if (getchar() == '\n') break;     //遇到换行符结束输入
+    }
+}
+
+int main() {
+    cout<<"please input target:"<<endl;
+    int target;
+    cin >>target;
+    vector<int> nums;
+    GetArray(nums);
+    Solution s;
+    vector<int>ans=s.twoSum(nums,target);
+    if (!ans.empty()) {
+        cout << "[";
+        int idx = 0;
+        for (auto i : ans) {
+            cout << i ;
+            idx++;
+            if (idx < ans.size()) cout << ",";
+        }
+        cout<< "]";
+    }
+    else {
+        cout << "no solution";
+    }
+    return 0;
+}
+
