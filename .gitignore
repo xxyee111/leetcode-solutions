@@ -1,0 +1,34 @@
+# C++编译文件
+*.exe
+*.out
+*.o
+*.obj
+*.class
+*.dll
+*.so
+*.dylib
+
+# 编译目录
+build/
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# IDE文件
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.suo
+*.user
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
