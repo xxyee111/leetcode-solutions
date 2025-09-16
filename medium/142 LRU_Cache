@@ -1,0 +1,110 @@
+//Some new knowledge to me:
+//给链表中每个节点赋予了一个unordered_map值，使节点包含key,value和指针，以此用cache[key]来返回该节点的地址,相当于将每个节点pack为一个整体并将价格和类型储存在哈希表中
+//note: cache[key]:指向储存在哈希表中键值为key的某个地址，即指向双向链表中对应key的节点
+//cache.count(key):判断哈希表中是否存在键值为key的node
+//some advantages of using HashMap:O(1) time complexity for both get and put operations
+// DLNode* node的两种使用途径：和new搭配创建节点，和作为指针指向某个节点----It's pretty different!
+
+#include <iostream>
+#include <unordered_map>
+using namespace std;
+//定义双向链表节点
+//定义双向链表节点
+struct DLNode {
+    int key;
+    int value;
+    DLNode* prev;
+    DLNode* next;
+    DLNode() :key(0), value(0), prev(nullptr), next(nullptr) {}
+    DLNode(int s_key, int s_value) :key(s_key), value(s_value), prev(nullptr), next(nullptr) {}
+};
+
+class LRUCache {
+private:
+    unordered_map<int, DLNode*> cache;    //创建储存键和节点指针的哈希表
+    DLNode* head;
+    DLNode* tail;
+    int m_size;
+    int m_capacity;
+
+    //添加节点到头部
+    void AddToHead(DLNode* node) {
+        node->prev = head;
+        node->next = head->next;      //插入操作
+        (head->next)->prev = node;    //更新头节点原下节点的前驱节点
+        head->next = node;            //更新头节点的后继节点
+    }
+    //删除节点
+    void DeleteNode(DLNode* node) {
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+    }
+
+    // 移动到头部（先删除再添加到头部）
+    void MoveToHead(DLNode* node) {
+        DeleteNode(node);
+        AddToHead(node);
+    }
+
+    // 移除尾部节点
+    DLNode* RemoveTail() {
+        DLNode* node = tail->prev;
+        DeleteNode(node);
+        return node;
+    }
+
+public:
+    //构造函数创建空链表
+    LRUCache(int capacity) :m_capacity(capacity), m_size(0) {
+        head = new DLNode();
+        tail = new DLNode();
+        head->next = tail;
+        tail->prev = head;
+    }
+
+    ~LRUCache() {
+        DLNode* curr = head->next;
+        while (curr != tail) {
+            DLNode* temp = curr;
+            curr = curr->next;
+            delete temp;
+        }
+        delete head;
+        delete tail;
+    }
+
+    //定义行为get
+    int get(int key) {
+        if (!cache.count(key)) {       //查找key是否出现过
+            return -1;
+        }
+        DLNode* node = cache[key];
+        MoveToHead(node);              //移动到头部，标记为最新
+        return node->value;
+    }
+
+    //定义行为put
+    void put(int key, int value) {
+        if (cache.count(key)) {
+            // 键已存在，更新值并移动到头部
+            DLNode* node = cache[key];
+            node->value = value;
+            MoveToHead(node);
+        }
+        else {
+            // 键不存在，创建新节点
+            DLNode* node = new DLNode(key, value);
+            cache[key] = node;
+            AddToHead(node);
+            m_size++;
+
+            // 如果超出容量，移除最近最少使用的节点
+            if (m_size > m_capacity) {
+                DLNode* removed = RemoveTail();
+                cache.erase(removed->key);
+                delete removed;
+                m_size--;
+            }
+        }
+    }
+}; 
