@@ -1,0 +1,25 @@
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> input;     //创建栈
+        unordered_map<char, char> map = {
+            {'(',')'},
+            {'{','}'},
+            {'[',']'}
+        };            //创建映射表
+        for (char c : s) {
+            if (map.count(c)) {
+                input.push(c);
+            }else if (input.empty() || map[input.top()] != c) {
+                return false;
+            }
+            else if (!input.empty() && map[input.top()] == c) {
+                input.pop();
+            }
+        }
+        if (!input.empty()) {
+            return false;
+        }
+        return 1;
+    }
+};
