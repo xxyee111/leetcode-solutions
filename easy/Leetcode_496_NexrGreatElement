@@ -1,0 +1,38 @@
+#the key is：确保栈顶元素永远是栈内最小的
+#元素入栈-->空栈，返回-1，元素如入栈顶
+#        -->非空栈-->去掉栈顶所有小于该元素的元素-->空栈，返回-1，元素入栈顶
+#                                             -->非空栈，返回栈顶元素，元素如栈顶
+
+
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+         stack <int> input;
+         unordered_map<int, int> map;
+         for (int i = nums2.size() - 1; i >=0; i--) {
+             int num = nums2[i];
+             if (input.empty()){
+                 map[num] = -1;
+                 input.push(num);
+             }
+             else if (!input.empty()) {
+                 while(!input.empty() && num > input.top()) {
+                     input.pop();
+                 }
+                 if (input.empty()) {
+                     map[num] = -1;
+                     input.push(num);
+                 }
+                 else {
+                     map[num] = input.top();
+                     input.push(num);
+                 }
+             }
+         }
+         vector<int>ans;
+         for (int num : nums1) {
+             ans.push_back(map[num]);
+         }
+         return ans;
+    }
+};
